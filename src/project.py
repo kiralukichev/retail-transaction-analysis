@@ -18,26 +18,22 @@ retail = retail.drop(retail[retail['InvoiceNo'].str.startswith('C')].index)
 #   из Германии (Germany) и оставить только тех, кто совершил более N заказов, где N – 80-й процентиль. 
 # Запишите полученные id пользователей в переменную germany_top (не весь датафрейм, только id).
 
-x = retail.query('Country == "Germany"') \
+uniq_ger = retail.query('Country == "Germany"') \
     .groupby('CustomerID', as_index=False) \
     .agg({'InvoiceNo':'nunique'})
 
-proc_80 = x['InvoiceNo'].quantile(0.8)
+proc_80 = uniq_ger['InvoiceNo'].quantile(0.8)
 
-germany_top = x.query('InvoiceNo > @proc_80')['CustomerID']
+germany_top = uniq_ger.query('InvoiceNo > @proc_80')['CustomerID']
 
 # Удаление дебликатов из датафрейма
 retail = retail.drop_duplicates()
 # Удаление из "InvoiceNo" значений, начинающихся с "С"
 retail = retail.drop(retail[retail['InvoiceNo'].str.startswith('C')].index)
 
-x = retail.query('Country == "Germany"') \
-    .groupby('CustomerID', as_index=False) \
-    .agg({'InvoiceNo':'nunique'})
+proc_80 = uniq_ger['InvoiceNo'].quantile(0.8)
 
-proc_80 = x['InvoiceNo'].quantile(0.8)
-
-germany_top = x.query('InvoiceNo > @proc_80')['CustomerID']
+germany_top = uniq_ger.query('InvoiceNo > @proc_80')['CustomerID']
 
 # Задание 5
 
@@ -45,7 +41,7 @@ germany_top = x.query('InvoiceNo > @proc_80')['CustomerID']
 # Результирующий датафрейм запишите в top_retail_germany.
 top_retail_germany = retail[retail.CustomerID.isin(germany_top)]
 
-y = top_retail_germany.query('StockCode != "POST"') \
+top_ger = top_retail_germany.query('StockCode != "POST"') \
     .groupby('StockCode', as_index=False) \
     .agg({'InvoiceNo':'count'}) \
     .sort_values('InvoiceNo', ascending=False)
@@ -62,10 +58,23 @@ retail = retail.drop(retail[retail['InvoiceNo'].str.startswith('C')].index)
 # В качестве ответа укажите топ-5 заказов (см.колонку InvoiceNo) по сумме заказа (через запятую с пробелом, в том же порядке).
 
 retail['Revenue'] = retail['Quantity']*retail['UnitPrice']
-x = retail.groupby('InvoiceNo', as_index=False) \
+retail_sum_rev = retail.groupby('InvoiceNo', as_index=False) \
     .agg({'Revenue':'sum'}) \
     .sort_values('Revenue', ascending=False) \
     .head(5)
+
+# Задание 9
+# Определите количество транзакций того или иного статуса.
+trans_count = transaction_data. \
+    groupby('transaction', as_index=False). \
+    agg({'name':'count'})
+
+# Задание 10 
+# Сколько успешных транзакций совершил каждый пользователь.
+success_trans = transaction_data. \
+    query('transaction == "successfull"'). \
+    groupby('name', as_index=False). \
+    agg({'transaction':'count'})
 
 transaction_data_updated['date'] = pd.to_datetime(transaction_data_updated.date)
 
@@ -82,4 +91,4 @@ pivot_trans_per_min = transaction_data_updated.groupby(['name','minute'], as_ind
 #   сохранив результаты в новой колонке 'true_minute'.
 transaction_data_updated['true_minute'] = transaction_data_updated['date'].dt.hour*60+transaction_data_updated['date'].dt.minute
 
-print(transaction_data_updated)
+print()
