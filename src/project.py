@@ -13,8 +13,6 @@ duplicates = retail[check_duplicates].copy()
 retail_uniq = retail.drop_duplicates(keep='first')
 duplicates_count = duplicates.InvoiceNo.count()
 duplicates_percent = duplicates_count*100/retail.InvoiceNo.count()
-
-# После подсчета дубликатов
 #print(f"Обнаружено {duplicates_count} повторяющихся транзакций ({duplicates_percent:.2f}% от общего объема)")
 #print("Вывод: Повторяющиеся транзакции могут указывать на проблемы в системе учета или дублирование записей. Рекомендую провести аудит процесса сбора данных.")
 
@@ -34,7 +32,7 @@ retail_uniq = retail.drop(retail[retail['InvoiceNo'].str.startswith('C')].index)
 #   из Германии (Germany) и оставить только тех, кто совершил более N заказов, где N – 80-й процентиль. 
 # Запишите полученные id пользователей в переменную germany_top (не весь датафрейм, только id).
 
-uniq_ger = retail.query('Country == "Germany"') \
+uniq_ger = retail_uniq.query('Country == "Germany"') \
     .groupby('CustomerID', as_index=False) \
     .agg({'InvoiceNo':'nunique'})
 proc_80 = uniq_ger['InvoiceNo'].quantile(0.8)
@@ -44,7 +42,7 @@ top_customers = uniq_ger.query('InvoiceNo > @proc_80')['CustomerID']
 
 # Возьмите из датафрейма retail записи только по интересующим нас пользователям из переменной germany_top. 
 # Результирующий датафрейм запишите в top_retail_germany.
-top_retail_germany = retail[retail.CustomerID.isin(top_customers)]
+top_retail_germany = retail_uniq[retail_uniq.CustomerID.isin(top_customers)]
 
 top_ger = top_retail_germany.query('StockCode != "POST"') \
     .groupby('StockCode', as_index=False) \
@@ -57,11 +55,12 @@ top_ger = top_retail_germany.query('StockCode != "POST"') \
 # Отсортируйте записи в порядке убывания TotalRevenue. 
 # В качестве ответа укажите топ-5 заказов (см.колонку InvoiceNo) по сумме заказа (через запятую с пробелом, в том же порядке).
 
-retail['Revenue'] = retail['Quantity']*retail['UnitPrice']
-retail_sum_rev = retail.groupby('InvoiceNo', as_index=False) \
+retail_uniq['Revenue'] = retail_uniq['Quantity']*retail_uniq['UnitPrice']
+retail_sum_rev = retail_uniq.groupby('InvoiceNo', as_index=False) \
     .agg({'Revenue':'sum'}) \
     .sort_values('Revenue', ascending=False) \
     .head(5)
+print(retail_sum_rev)
 
 # Определите количество транзакций того или иного статуса.
 trans_count = transaction_data. \
