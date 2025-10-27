@@ -123,8 +123,8 @@
 git clone https://gitlab.com/kiralukichev/retail-transaction-analysis.git
 cd retail-transaction-analysis
 pip install -r requirements.txt
-Скачай csv-файлs:
-Распакуй и в project.py измени путь до csv-файлов в зависимости от установки:
-    pd.read_csv В переменную retail сохрани файл date.csv с encoding= 'ISO-8859-1'
-    pd.read_csv В пепеременную transaction_data сохрани файл transaction_data.csv'
+Скачайте csv-файлs:
+Распакуйте и в project.py измените путь до csv-файлов в зависимости от установки:
+    pd.read_csv В переменную retail сохраните файл date.csv с encoding= 'ISO-8859-1'
+    pd.read_csv В пепеременную transaction_data сохраните файл transaction_data.csv'
 'Run Pyhon File' Используйте данную кнопку ▶️ для запуска файла project.py 
