@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 retail = pd.read_csv('C:/VsCode/venv/retail-transaction-analysis/data/data.csv', encoding= 'ISO-8859-1')
 transaction_data = pd.read_csv('C:/VsCode/venv/retail-transaction-analysis/data/transaction_data.csv')
-retail['date'] = pd.to_datetime(retail.InvoiceDate)
+retail['Date'] = pd.to_datetime(retail.InvoiceDate)
 transaction_data['date'] = pd.to_datetime(transaction_data.date)
 transaction_data['minute'] = transaction_data['date'].dt.minute
 
@@ -90,4 +90,4 @@ growth_factor = peak_activity / avg_activity
 #Это напрямую коррелирует с публикацией рекламы блогером и демонстрирует мгновенный отклик аудитории.")
 
 # Для просмотра значений и таблиц:
-print()
+print(retail.columns)
