@@ -91,31 +91,39 @@ growth_factor = peak_activity / avg_activity
 
 # Расчет RFM
 
-# Расчет давности последней покупки
-current_date = retail['Date'].max()
-recency_df = retail.groupby('CustomerID')['Date'].max().reset_index()
-recency_df['Recency'] = (current_date - recency_df['Date']).dt.days
+def calculate_rfm_metrics(df):
+    """Расчет RFM-метрик для сегментации клиентов"""
+    
+    # Фильтруем только успешные транзакции (без отмен)
+    successful_df = df[~df['InvoiceNo'].str.startswith('C', na=False)]
+    successful_df = successful_df[successful_df['Quantity'] > 0]
+    
+    # Recency
+    current_date = successful_df['Date'].max()
+    recency = successful_df.groupby('CustomerID')['Date'].max().reset_index()
+    recency['Recency'] = (current_date - recency['Date']).dt.days
+    
+    # Frequency
+    frequency = successful_df.groupby('CustomerID')['InvoiceNo'].nunique().reset_index()
+    frequency.rename(columns={'InvoiceNo': 'Frequency'}, inplace=True)
+    
+    # Monetary
+    successful_df['TotalValue'] = successful_df['Quantity'] * successful_df['UnitPrice']
+    monetary = successful_df.groupby('CustomerID')['TotalValue'].sum().reset_index()
+    monetary.rename(columns={'TotalValue': 'Monetary'}, inplace=True)
+    
+    # Объединяем
+    rfm = recency.merge(frequency, on='CustomerID').merge(monetary, on='CustomerID')
+    
+    # RFM-баллы
+    rfm['R_Score'] = pd.qcut(rfm['Recency'], 5, labels=[5,4,3,2,1])
+    rfm['F_Score'] = pd.qcut(rfm['Frequency'], 5, labels=[1,2,3,4,5])
+    rfm['M_Score'] = pd.qcut(rfm['Monetary'], 5, labels=[1,2,3,4,5])
+    
+    return rfm
 
-# Расчет частоты покупок
-frequency_df = retail.groupby('CustomerID')['InvoiceNo'].nunique().reset_index()
-frequency_df.rename(columns={'InvoiceNo': 'Frequency'}, inplace=True)
-
-# Расчет общей суммы покупок
-retail['TotalPrice'] = retail['Quantity'] * retail['UnitPrice']
-monetary_df = retail.groupby('CustomerID')['TotalPrice'].sum().reset_index()
-monetary_df.rename(columns={'TotalPrice': 'Monetary'}, inplace=True)
-
-# Собираем все метрики вместе
-rfm_df = recency_df.merge(frequency_df, on='CustomerID').merge(monetary_df, on='CustomerID')
-
-# Присваиваем баллы (1-5, где 5 - лучший)
-rfm_df['R_Score'] = pd.qcut(rfm_df['Recency'], 5, labels=[5,4,3,2,1])
-rfm_df['F_Score'] = pd.qcut(rfm_df['Frequency'], 5, labels=[1,2,3,4,5])
-rfm_df['M_Score'] = pd.qcut(rfm_df['Monetary'], 5, labels=[1,2,3,4,5])
-
-# Создаем RFM-сегмент
-rfm_df['RFM_Segment'] = rfm_df['R_Score'].astype(str) + rfm_df['F_Score'].astype(str) + rfm_df['M_Score'].astype(str)
-rfm_df['RFM_Score'] = rfm_df['R_Score'].astype(int) + rfm_df['F_Score'].astype(int) + rfm_df['M_Score'].astype(int)
+# Применяем к данным по Германии
+german_rfm = calculate_rfm_metrics(top_retail_germany)
 
 # Для просмотра значений и таблиц:
 print()
