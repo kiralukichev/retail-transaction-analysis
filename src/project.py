@@ -34,8 +34,7 @@ uniq_ger = retail_uniq.query('Country == "Germany"') \
     .agg({'InvoiceNo':'nunique'})
 proc_80 = uniq_ger['InvoiceNo'].quantile(0.8)
 top_customers = uniq_ger.query('InvoiceNo > @proc_80')['CustomerID']
-#print(f"Вывод: Выделена группа из {len(top_customers)} наиболее активных клиентов (80-й процентиль). \
-#Эти клиенты генерируют непропорционально большую долю выручки и требуют особого подхода к удержанию.")
+#print(f"Вывод: Выделена группа из {len(top_customers)} наиболее активных клиентов (80-й процентиль). Эти клиенты генерируют непропорционально большую долю выручки и требуют особого подхода к удержанию.")
 
 # Смотрим на табличку только по этим подльзователям.
 top_retail_germany = retail_uniq[retail_uniq.CustomerID.isin(top_customers)]
@@ -86,8 +85,7 @@ top_products = top_retail_germany.query('StockCode != "POST"') \
     .agg({'InvoiceNo':'count'}) \
     .sort_values('InvoiceNo', ascending=False) \
     .head(5)
-#print(f"Вывод: Топ-5 товаров среди премиальных клиентов: {list(top_products.index)}. \
-#Эти товары стоит включить в персонализированные предложения и рекламные кампании.")
+#print(f"Вывод: Топ-5 товаров среди премиальных клиентов: {list(top_products.index)}. Эти товары стоит включить в персонализированные предложения и рекламные кампании.")
 
 # 5 наиболее крупных по выручке заказов. 
 retail_uniq['Revenue'] = retail_uniq['Quantity']*retail_uniq['UnitPrice']
@@ -95,8 +93,7 @@ top_orders = retail_uniq.groupby('InvoiceNo', as_index=False) \
     .agg({'Revenue':'sum'}) \
     .sort_values('Revenue', ascending=False) \
     .head(5)
-#print(f"Вывод: Самые крупные заказы приносят от {top_orders.Revenue.min():.0f} до {top_orders.Revenue.max():.0f}. \
-#Анализ состава этих заказов поможет понять, что стимулирует крупные покупки.")
+#print(f"Вывод: Самые крупные заказы приносят от {top_orders.Revenue.min():.0f} до {top_orders.Revenue.max():.0f}. Анализ состава этих заказов поможет понять, что стимулирует крупные покупки.")
 
 # Определите количество транзакций того или иного статуса.
 trans_counts = transaction_data['transaction'].value_counts()
@@ -109,8 +106,7 @@ success_trans = transaction_data. \
 
 # Процент ошибочных транзакций.
 error_rate = (trans_counts.get('error', 0) / len(transaction_data)) * 100
-#print(f"Вывод: Доля ошибочных транзакций: {error_rate:.2f}%. \
-#Такая доля ошибок не требует срочного вмешательства.")
+#print(f"Вывод: Доля ошибочных транзакций: {error_rate:.2f}%. Такая доля ошибок не требует срочного вмешательства.")
 
 # Измерение кол-ва операций осуществляемых каждым пользователем в каждую минуту наблюдаемого временного промежутка.
 trans_per_min = transaction_data.groupby(['name','minute'], as_index=False) \
@@ -122,7 +118,7 @@ peak_minute = trans_per_min.sum(axis=1).idxmax()
 peak_activity = trans_per_min.sum(axis=1).max()
 avg_activity = trans_per_min.sum(axis=1).mean()
 growth_factor = peak_activity / avg_activity 
-#print(f"Вывод: Обнаружен аномальный всплеск активности в {peak_minute}-ю минуту: +{growth_factor:.1f}x к среднему значению.")
+#print(f"Вывод: Обнаружен аномальный всплеск активности пользователей в {peak_minute}-ю минуту: +{growth_factor:.1f}x к среднему значению.")
 
 # Для просмотра значений и таблиц:
 print()
