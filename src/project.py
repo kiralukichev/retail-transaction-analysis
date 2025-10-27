@@ -89,5 +89,33 @@ growth_factor = peak_activity / avg_activity
 #print(f"Вывод: Обнаружен аномальный всплеск активности в {peak_minute}-ю минуту: +{growth_factor:.1f}x к среднему значению. \
 #Это напрямую коррелирует с публикацией рекламы блогером и демонстрирует мгновенный отклик аудитории.")
 
+# Расчет RFM
+
+# Расчет давности последней покупки
+current_date = retail['Date'].max()
+recency_df = retail.groupby('CustomerID')['Date'].max().reset_index()
+recency_df['Recency'] = (current_date - recency_df['Date']).dt.days
+
+# Расчет частоты покупок
+frequency_df = retail.groupby('CustomerID')['InvoiceNo'].nunique().reset_index()
+frequency_df.rename(columns={'InvoiceNo': 'Frequency'}, inplace=True)
+
+# Расчет общей суммы покупок
+retail['TotalPrice'] = retail['Quantity'] * retail['UnitPrice']
+monetary_df = retail.groupby('CustomerID')['TotalPrice'].sum().reset_index()
+monetary_df.rename(columns={'TotalPrice': 'Monetary'}, inplace=True)
+
+# Собираем все метрики вместе
+rfm_df = recency_df.merge(frequency_df, on='CustomerID').merge(monetary_df, on='CustomerID')
+
+# Присваиваем баллы (1-5, где 5 - лучший)
+rfm_df['R_Score'] = pd.qcut(rfm_df['Recency'], 5, labels=[5,4,3,2,1])
+rfm_df['F_Score'] = pd.qcut(rfm_df['Frequency'], 5, labels=[1,2,3,4,5])
+rfm_df['M_Score'] = pd.qcut(rfm_df['Monetary'], 5, labels=[1,2,3,4,5])
+
+# Создаем RFM-сегмент
+rfm_df['RFM_Segment'] = rfm_df['R_Score'].astype(str) + rfm_df['F_Score'].astype(str) + rfm_df['M_Score'].astype(str)
+rfm_df['RFM_Score'] = rfm_df['R_Score'].astype(int) + rfm_df['F_Score'].astype(int) + rfm_df['M_Score'].astype(int)
+
 # Для просмотра значений и таблиц:
-print(retail.columns)
+print()
