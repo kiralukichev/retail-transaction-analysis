@@ -20,9 +20,9 @@ duplicates_percent = duplicates_count*100/retail.InvoiceNo.count()
 
 # Отмененные транзакции. 
 cancelled_count = len(retail[retail['InvoiceNo'].str.startswith('C')])
-total_orders = retail['InvoiceNo'].nunique()
+total_orders = len(retail['InvoiceNo'])
 cancellation_rate = (cancelled_count / total_orders) * 100 
-#print(f"Вывод: Уровень отмен заказов составляет {cancellation_rate:.1f}%. Это {['ниже', 'выше'][cancellation_rate > 5]} среднего по отрасли (3-5%). Стоит проанализировать причины отмен.")
+#print(f"Вывод: Уровень отмен заказов составляет {cancellation_rate:.1f}%. Это {['ниже', 'выше'][cancellation_rate > 5]} среднего по отрасли (5-10%). Стоит проанализировать причины отмен.")
 
 # Удаление из "InvoiceNo" значений, начинающихся с "С"
 retail_uniq = retail.drop(retail[retail['InvoiceNo'].str.startswith('C')].index)
@@ -38,6 +38,7 @@ top_customers = uniq_ger.query('InvoiceNo > @proc_80')['CustomerID']
 
 # Смотрим на табличку только по этим подльзователям.
 top_retail_germany = retail_uniq[retail_uniq.CustomerID.isin(top_customers)]
+top_retail_germany['Revenue'] = top_retail_germany['Quantity']*top_retail_germany['UnitPrice']
 
 # Расчет RFM
 def calculate_rfm_metrics(df):
