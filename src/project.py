@@ -2,8 +2,8 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-retail = pd.read_csv('C:/VsCode/venv/retail-transaction-analysis/data/data.csv', encoding= 'ISO-8859-1')
-transaction_data = pd.read_csv('C:/VsCode/venv/retail-transaction-analysis/data/transaction_data.csv')
+retail = pd.read_csv('B:/VsCode/venv/retail-transaction-analysis/data/data.csv', encoding= 'ISO-8859-1')
+transaction_data = pd.read_csv('B:/VsCode/venv/retail-transaction-analysis/data/transaction_data.csv')
 
 retail['Date'] = pd.to_datetime(retail.InvoiceDate)
 transaction_data['date'] = pd.to_datetime(transaction_data.date)
