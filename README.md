@@ -118,7 +118,4 @@ git clone https://gitlab.com/kiralukichev/retail-transaction-analysis.git
 cd retail-transaction-analysis
 pip install -r requirements.txt
 ```
-Скачайте файлы: https://disk.yandex.ru/d/gfowR7k9zxCxLw и распакуйте в retail-transaction-analysis.
-В project.py добавьте путь до файлов в зависимости от установки:
-    pd.read_csv В переменную retail сохраните файл date.csv с encoding= 'ISO-8859-1'
-    pd.read_csv В пепеременную transaction_data сохраните файл transaction_data.csv'
+Скачайте файлы: https://disk.yandex.ru/d/gfowR7k9zxCxLw и распакуйте в retail-transaction-analysis. В project.py добавьте путь до файлов в зависимости от установки: в переменную retail сохраните файл date.csv с encoding= 'ISO-8859-1'; в пепеременную transaction_data сохраните файл transaction_data.csv'.
