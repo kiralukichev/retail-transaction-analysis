@@ -39,7 +39,6 @@ avg_tiket = retail_uniq \
 purchase_freq = retail_uniq \
     .groupby('CustomerID') \
     .agg({'InvoiceNo':'nunique'})
-print(purchase_freq)
 
 # Анализ покупок наиболее активных пользователей из Германии. 
 # (Коллеги уже расчитали, что этот порог — 80-й процентиль.)
