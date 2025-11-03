@@ -26,6 +26,20 @@ cancellation_rate = (cancelled_count / total_orders) * 100
 
 # Удаление из "InvoiceNo" значений, начинающихся с "С"
 retail_uniq = retail.drop(retail[retail['InvoiceNo'].str.startswith('C')].index)
+retail_uniq['Revenue'] = retail_uniq['Quantity']*retail_uniq['UnitPrice']
+
+
+# Средний чек на клиента
+avg_tiket = retail_uniq \
+    .groupby('CustomerID') \
+    .agg({'Revenue':'mean'}) \
+    .round(2)
+
+# Частота покупок на клиента
+purchase_freq = retail_uniq \
+    .groupby('CustomerID') \
+    .agg({'InvoiceNo':'nunique'})
+print(purchase_freq)
 
 # Анализ покупок наиболее активных пользователей из Германии. 
 # (Коллеги уже расчитали, что этот порог — 80-й процентиль.)
@@ -89,7 +103,6 @@ top_products = top_retail_germany.query('StockCode != "POST"') \
 #print(f"Вывод: Топ-5 товаров среди премиальных клиентов: {list(top_products.index)}. Эти товары стоит включить в персонализированные предложения и рекламные кампании.")
 
 # 5 наиболее крупных по выручке заказов. 
-retail_uniq['Revenue'] = retail_uniq['Quantity']*retail_uniq['UnitPrice']
 top_orders = retail_uniq.groupby('InvoiceNo', as_index=False) \
     .agg({'Revenue':'sum'}) \
     .sort_values('Revenue', ascending=False) \
