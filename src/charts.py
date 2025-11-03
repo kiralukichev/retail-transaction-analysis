@@ -17,20 +17,13 @@ plt.figure(figsize=(8, 5))
 plt.bar(status_counts.index, status_counts.values, color=['green', 'red', 'blue', 'orange'])
 plt.title('Статусы транзакций')
 plt.ylabel('Количество')
-plt.savefig('C:/VsCode/venv/retail-transaction-analysis/reports/transaction_status.png', dpi=300, bbox_inches='tight')
 plt.show()
 
 # Круговая диаграмма
 plt.figure(figsize=(8, 8))
 plt.pie(status_counts.values, labels=status_counts.index, autopct='%1.1f%%')
 plt.title('Доли статусов транзакций')
-plt.savefig('C:/VsCode/venv/retail-transaction-analysis/reports/transaction_status_circle.png', dpi=300, bbox_inches='tight')
 plt.show()
-
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
-from project import transaction_data, top_retail_germany, retail_uniq, german_rfm
 
 # Исключаем POST и считаем популярные товары
 top_10_products_ger = (top_retail_germany[top_retail_germany['StockCode'] != 'POST']
@@ -44,7 +37,6 @@ plt.yticks(range(len(top_10_products_ger)), [str(x)[:40] + '...' for x in top_10
 plt.title('Топ-10 популярных товаров в Германии')
 plt.xlabel('Количество заказов')
 plt.tight_layout()
-plt.savefig('C:/VsCode/venv/retail-transaction-analysis/reports/top_10_products_ger.png', dpi=300, bbox_inches='tight')
 plt.show()
 
 # Считаем сумму каждого заказа
@@ -60,7 +52,6 @@ plt.xlabel('Номер заказа')
 plt.ylabel('Сумма заказа')
 plt.xticks(range(len(top_orders)), top_orders.index, rotation=45)
 plt.tight_layout()
-plt.savefig('C:/VsCode/venv/retail-transaction-analysis/reports/top_10_orders.png', dpi=300, bbox_inches='tight')
 plt.show()
 
 # Сумма продаж по странам (топ-10)
@@ -72,7 +63,6 @@ plt.title('Выручка по странам (топ-10)')
 plt.ylabel('Общая выручка')
 plt.xticks(rotation=45)
 plt.tight_layout()
-plt.savefig('C:/VsCode/venv/retail-transaction-analysis/reports/top_10_country.png', dpi=300, bbox_inches='tight')
 plt.show()
 
 # Предполагаем, что rfm_df уже рассчитан
@@ -94,7 +84,6 @@ ax3.set_title('Monetary (общая сумма)')
 ax3.set_xlabel('Сумма')
 
 plt.tight_layout()
-plt.savefig('C:/VsCode/venv/retail-transaction-analysis/reports/rfm.png', dpi=300, bbox_inches='tight')
 plt.show()
 
 # Распределение баллов
@@ -110,7 +99,6 @@ ax3.bar(german_rfm['M_Score'].value_counts().index, german_rfm['M_Score'].value_
 ax3.set_title('Monetary Scores')
 
 plt.tight_layout()
-plt.savefig('C:/VsCode/venv/retail-transaction-analysis/reports/frm_score.png', dpi=300, bbox_inches='tight')
 plt.show()
 
 # Средний чек по странам (топ-10)
@@ -125,5 +113,4 @@ plt.title('Средний чек по странам (топ-10)')
 plt.ylabel('Средний чек')
 plt.xticks(rotation=45)
 plt.tight_layout()
-plt.savefig('C:/VsCode/venv/retail-transaction-analysis/reports/top_10_avg_rev_country.png', dpi=300, bbox_inches='tight')
 plt.show()
