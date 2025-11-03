@@ -1,18 +1,18 @@
 # 📊 Анализ транзакционных данных ритейла
 
 ## 🌳 Структура проекта
-
+```
 retail-transaction-analysis/
-├─ charts/
+├─ charts/         # Папка с графиками
 │  ├─ .png files
 ├─ src/
 │  ├─ __pycache__
-│  ├─ charts.py
-│  ├─ progect.py
+│  ├─ charts.py    # Код построения графиков
+│  ├─ progect.py   # Основной код проекта
 ├─ gitignore
 ├─ README
 └─ requirements
-
+```
 ## 📋 Оглавление
 
 + Описание проекта
